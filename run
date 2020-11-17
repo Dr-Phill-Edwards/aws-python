@@ -8,5 +8,5 @@ do
     sed -e "s/\${yourOktaDomain}/$OKTA_DOMAIN/g" -e "s/\${yourClientId}/$OKTA_CLIENT_ID/g" $file > $destfile
 done
 
-python3 -m server --port=8080
+python -m server --port=8080
 
