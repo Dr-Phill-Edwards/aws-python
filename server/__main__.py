@@ -11,7 +11,9 @@ class MessageHandler(RequestHandler):
     def post(self):
         event = {"message": self.get_argument('message'), "headers": self.request.headers}
         context = {}
-        self.write(message(event, context))
+        response = message(event, context)
+        self.set_status(response['statusCode'])
+        self.write(response)
 
 
 define("port", default=8080, help="Listener port")
