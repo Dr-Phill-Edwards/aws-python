@@ -10,11 +10,19 @@ public_key = None
 messages = ["Messages"]
 
 def message(event, context):
+    body = get_post_data(event['body'])
     #result = verify(event['headers'])
     #if not bool(result):
-    messages.append(event['message'])
+    messages.append(body['message'])
     result = { 'statusCode': 200, 'body': json.dumps(messages) }
     return result
+
+def get_post_data(body):
+    postdata = {}
+    for items in body.split('&'):
+        values = items.split('=')
+        postdata[values[0]] = values[1]
+    return postdata
 
 def verify(headers):
     result = {}
