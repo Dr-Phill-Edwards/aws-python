@@ -3,7 +3,6 @@ import json
 from jwt import (JWT, jwk_from_dict)
 from jwt.exceptions import JWTDecodeError
 import os
-from tornado.httpclient import HTTPClient
 
 instance = JWT()
 public_keys = {}
@@ -34,7 +33,6 @@ def get_post_data(body):
     return postdata
 
 def verify(token):
-    get_keys()
     result = {}
     try:
         decoded = instance.decode(token, public_key, False)
@@ -50,3 +48,4 @@ def get_keys():
         public_key = jwk_from_dict(jwk)
         public_keys[kid] = public_key
 
+get_keys()
