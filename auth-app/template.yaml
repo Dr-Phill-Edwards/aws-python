@@ -9,13 +9,19 @@ Description: >
 Globals:
   Function:
     Timeout: 10
-    Environment:
-      OKTA_DOMAIN: dev-436256.okta.com
 
 Resources:
+  OktaDomain:
+    Type: String
+  OktaKeys:
+    Type: String
   MessagesFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      Environment:
+          Variables:
+            OKTA_DOMAIN: !Ref OktaDomain
+            OKTA_KEYS: !Ref OktaKeys
       CodeUri: messages/
       Handler: messages.message
       Runtime: python3.7

@@ -1,3 +1,4 @@
+import base64
 import json
 from jwt import (JWT, jwk_from_dict)
 from jwt.exceptions import JWTDecodeError
@@ -33,6 +34,7 @@ def get_post_data(body):
     return postdata
 
 def verify(token):
+    get_keys()
     result = {}
     try:
         decoded = instance.decode(token, public_key, False)
@@ -41,14 +43,10 @@ def verify(token):
     return result
 
 def get_keys():
-    http_client = HTTPClient()
-    uri = 'https://dev-436256.okta.com/oauth2/default/v1/keys'
-    response = http_client.fetch(uri)
-    jwks = json.loads(response.body)
-    http_client.close()
+    keys = base64.b64decode(os.environ['OKTA_KEYS'])
+    jwks = json.loads(keys)
     for jwk in jwks['keys']:
         kid = jwk['kid']
         public_key = jwk_from_dict(jwk)
         public_keys[kid] = public_key
 
-get_keys()

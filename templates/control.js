@@ -41,7 +41,8 @@ function onmessage() {
         return response.text();
     })
     .then(data => {
-        document.getElementById('messages').value = data;
+        messages = JSON.parse(data)
+        document.getElementById('messages').value = messages.join('\n');
     })
     .catch(function(error) {
         document.getElementById('messages').value = error;
