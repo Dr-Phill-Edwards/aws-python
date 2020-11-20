@@ -11,10 +11,18 @@ messages = ["Messages"]
 
 def message(event, context):
     body = get_post_data(event['body'])
-    #result = verify(event['headers'])
-    #if not bool(result):
-    messages.append(body['message'])
-    result = { 'statusCode': 200, 'body': json.dumps(messages) }
+    result = verify(body['token'])
+    if not bool(result):
+        messages.append(body['message'])
+        result = { 
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+            },
+            'body': json.dumps(messages) 
+    }
     return result
 
 def get_post_data(body):
@@ -24,21 +32,17 @@ def get_post_data(body):
         postdata[values[0]] = values[1]
     return postdata
 
-def verify(headers):
+def verify(token):
     result = {}
-    if 'Authorization' in headers:
-        token = headers['Authorization'].removeprefix('Bearer ')
-        try:
-            decoded = instance.decode(token, public_key, False)
-        except JWTDecodeError:
-            result = { 'statusCode': 403, 'body': 'Forbidden '}
-    else:
-        result = { 'statusCode': 401, 'body': 'Unauthorized '}
+    try:
+        decoded = instance.decode(token, public_key, False)
+    except JWTDecodeError:
+        result = { 'statusCode': 403, 'body': 'Forbidden '}
     return result
 
 def get_keys():
     http_client = HTTPClient()
-    uri = 'https://' + os.getenv('OKTA_DOMAIN') + '/oauth2/default/v1/keys'
+    uri = 'https://dev-436256.okta.com/oauth2/default/v1/keys'
     response = http_client.fetch(uri)
     jwks = json.loads(response.body)
     http_client.close()
@@ -47,4 +51,4 @@ def get_keys():
         public_key = jwk_from_dict(jwk)
         public_keys[kid] = public_key
 
-#get_keys()
+get_keys()

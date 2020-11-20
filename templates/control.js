@@ -24,15 +24,14 @@ signIn.renderEl({
 });
 
 function onmessage() {
-    const url = "/api/messages";
+    const url = "http://localhost:3000/api/messages";
     var headers = {}
     if (accessToken != null) {
-        headers = { 'Authorization': 'Bearer ' + accessToken }
+        document.getElementById('token').value = accessToken;
     }
     fetch(url, {
         method : "POST",
         mode: 'cors',
-        headers: headers,
         body: new URLSearchParams(new FormData(document.getElementById("messageForm"))),
     })
     .then((response) => {
@@ -42,10 +41,9 @@ function onmessage() {
         return response.text();
     })
     .then(data => {
-        var msgs = JSON.parse(data) 
-        document.getElementById('messages').value = msgs.messages.join('\n');
+        document.getElementById('messages').value = data;
     })
     .catch(function(error) {
-        document.getElementById('messages').value = "Permission denied";
+        document.getElementById('messages').value = error;
     });
 }
